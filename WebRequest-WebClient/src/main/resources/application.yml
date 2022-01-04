@@ -1,0 +1,5 @@
+url:
+  #dataBaseUrl: https://swapi.py4e.com/api/
+  dataBaseUrl: http://localhost:8080
+  dataVehicles: https://swapi.py4e.com/api/vehicles/
+
