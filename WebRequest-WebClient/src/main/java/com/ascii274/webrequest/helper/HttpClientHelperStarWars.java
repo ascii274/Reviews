@@ -6,7 +6,9 @@ import io.netty.handler.timeout.WriteTimeoutHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.http.codec.ClientCodecConfigurer;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.netty.http.client.HttpClient;
@@ -15,6 +17,7 @@ import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 
 /*
@@ -43,8 +46,23 @@ public class HttpClientHelperStarWars {
                 );
         client = WebClient.builder()
                 .clientConnector(new ReactorClientHttpConnector(httpClient))
+//                .codecs(consumer) // limit bytes to buffer
+                .exchangeStrategies(ExchangeStrategies.builder()
+                .codecs(configurer -> configurer
+                        .defaultCodecs()
+                        .maxInMemorySize(30 * 1024 * 1024))
+                .build())
                 .build();
     }
+
+    /**
+     * - TODO: maxInMemorySize apply in application.yml
+     * - Control max bytes to buffer, maximum file.json size to receive
+     */
+    final Consumer<ClientCodecConfigurer> consumer = configurer->{
+        final ClientCodecConfigurer.ClientDefaultCodecs codecs = configurer.defaultCodecs();
+        codecs.maxInMemorySize(30 * 1024 * 1024);
+    };
 
     public Mono<String> getDataString(URL url){
         WebClient.UriSpec<WebClient.RequestBodySpec> uriSpec = client.method(HttpMethod.GET);// 1:same
