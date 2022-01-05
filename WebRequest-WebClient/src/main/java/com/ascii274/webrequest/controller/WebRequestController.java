@@ -1,6 +1,8 @@
 package com.ascii274.webrequest.controller;
 
 import com.ascii274.webrequest.config.PropertiesConfig;
+import com.ascii274.webrequest.dto.EntitySportCAT_DTO;
+import com.ascii274.webrequest.helper.HttpClientHelperSportEntityCAT;
 import com.ascii274.webrequest.helper.HttpClientHelperStarWars;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +21,9 @@ public class WebRequestController {
     @Autowired
     HttpClientHelperStarWars httpClientHelperStarWars;
     @Autowired
+    HttpClientHelperSportEntityCAT httpClientHelperSportEntityCAT;
+
+    @Autowired
     PropertiesConfig propertiesConfig;
 
     @GetMapping(value="/test")
@@ -34,6 +39,13 @@ public class WebRequestController {
         }  catch (MalformedURLException mue) {
             throw  new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"Resource not found",mue);
         }
+    }
+
+
+    @GetMapping(value="/sports-entities")
+    public Mono<EntitySportCAT_DTO[]> getSportEntity(){
+        return httpClientHelperSportEntityCAT.getData();
+
     }
 
 
