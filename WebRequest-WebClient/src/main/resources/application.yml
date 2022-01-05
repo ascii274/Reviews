@@ -3,3 +3,5 @@ url:
   dataBaseUrl: http://localhost:8080
   dataVehicles: https://swapi.py4e.com/api/vehicles/
 
+# Open data gencat Entitat esportives
+  dataEntitatEsportivaCAT: https://analisi.transparenciacatalunya.cat/resource/qrgc-u7pk.json
