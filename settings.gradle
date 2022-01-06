@@ -1,2 +1,3 @@
 rootProject.name = 'Reviews'
 include 'WebRequest-WebClient'
+include 'MapFlatMap'
