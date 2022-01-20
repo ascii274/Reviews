@@ -1,8 +1,14 @@
 package com.ascii274.mapflatmap.controller;
 
+import com.ascii274.mapflatmap.model.Persona;
+import io.reactivex.Observable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -14,11 +20,13 @@ import static org.testng.AssertJUnit.assertEquals;
 /*
 source https://www.baeldung.com/java-difference-map-and-flatmap
 */
-
+//http://localhost:8080/v1/
 @RestController
 @RequestMapping(value="/v1")
 
 public class MapFlatMapController {
+
+    private static final Logger Log = LoggerFactory.getLogger(MapFlatMapController.class);
 
     @GetMapping(value="/test-map")
     public String test(){
@@ -98,7 +106,49 @@ public class MapFlatMapController {
                 .collect(Collectors.toList()); // return flattened ["1","2","3","4"]
     }
 
+    // video mitocode
+    @GetMapping(value="/react")
+    public void reactor(){
+        Mono.just(new Persona(1,"Joel",45))
+                .doOnNext( p-> { // uso de mas de una linea
+                    Log.info("[reactor] Persona" + p); // sin subscribe no lo muestra, usar depuracion
+                })
+                .subscribe(p->Log.info("[reactor] Persona" + p)); // para datos finales
+    }
 
+    @GetMapping(value="/rxjava2")
+    public void rxjava2(){
+        Observable.just(new Persona(1,"Joel",45))
+                .doOnNext(p->Log.info("[reactor] Persona" + p))
+                .subscribe(p->Log.info("[reactor] Persona" + p));
+    }
 
+    @GetMapping(value="/flux")
+    public void flux(){
+        List<Persona> personas = new ArrayList<>();
+        personas.add(new Persona(1,"Analyn",45));
+        personas.add(new Persona(2,"Shiva",8));
+        personas.add(new Persona(3,"Joel",47));
+        Flux.fromIterable(personas).subscribe(p -> Log.info(p.toString())); // proces asincrono
+
+    }
+
+    @GetMapping(value="/mono")
+    public void mono() {
+        Mono.just(new Persona(1,"Analyn",45))
+                .subscribe( p -> Log.info(p.toString())); // para enterarme lo que pasa con Mono.
+    }
+
+    //https://www.youtube.com/watch?v=jJeYYiqhOTg&list=PLvimn1Ins-41pwh18gh_ZkxPOkrEEhXz6&index=5
+    @GetMapping(value="/flux-mono")
+    public void fluxMono(){
+        List<Persona> personas = new ArrayList<>();
+        personas.add(new Persona(1,"Analyn",45));
+        personas.add(new Persona(2,"Shiva",8));
+        personas.add(new Persona(3,"Joel",47));
+        Flux<Persona> fx = Flux.fromIterable(personas);
+        fx.collectList().subscribe(lista -> Log.info(lista.toString()));
+
+    }
 
 }
