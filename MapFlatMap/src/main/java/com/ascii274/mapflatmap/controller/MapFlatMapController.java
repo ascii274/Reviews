@@ -130,7 +130,6 @@ public class MapFlatMapController {
         personas.add(new Persona(2,"Shiva",8));
         personas.add(new Persona(3,"Joel",47));
         Flux.fromIterable(personas).subscribe(p -> Log.info(p.toString())); // proces asincrono
-
     }
 
     @GetMapping(value="/mono")
