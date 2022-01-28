@@ -1,7 +1,9 @@
 package com.ascii274.mapflatmap.controller;
 
 import com.ascii274.mapflatmap.model.Persona;
+import com.ascii274.mapflatmap.model.Venta;
 import io.reactivex.Observable;
+import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.sql.Array;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -17,10 +21,13 @@ import java.util.stream.Stream;
 import static java.util.Arrays.asList;
 import static org.testng.AssertJUnit.assertEquals;
 
-/*
-source https://www.baeldung.com/java-difference-map-and-flatmap
+/**
+ * source:
+ * https://www.baeldung.com/java-difference-map-and-flatmap
+ * https://www.youtube.com/watch?v=yZGrmg-2-qQ&list=PLvimn1Ins-41pwh18gh_ZkxPOkrEEhXz6&index=8
+ * http://localhost:8080/v1/
 */
-//http://localhost:8080/v1/
+
 @RestController
 @RequestMapping(value="/v1")
 
@@ -147,7 +154,170 @@ public class MapFlatMapController {
         personas.add(new Persona(3,"Joel",47));
         Flux<Persona> fx = Flux.fromIterable(personas);
         fx.collectList().subscribe(lista -> Log.info(lista.toString()));
+    }
+
+    @Test
+    public void flatMapPersona(){
+        // fltamap sirve para manipular datos
+        List<Persona> personas = new ArrayList<>();
+        personas.add(new Persona(1,"Analyn",45));
+        personas.add(new Persona(2,"Shiva",8));
+        personas.add(new Persona(3,"Joel",47));
+        Flux.fromIterable(personas) // iteramos por cada elmento
+                .flatMap(p->{
+                    p.setEdad(p.getEdad() + 10);
+                    return Mono.just(p); //retornamos otro flujo de datos
+                        })
+                .subscribe(p->Log.info(p.toString())); // mostramos contenido después de la transformación
+    }
+
+    @Test
+    public void groupBy(){
+        // prueba de cambiar el idPersona para cambiar el resultado de la agrupacion
+        List<Persona> personas = new ArrayList<>();
+        personas.add(new Persona(1,"Analyn",45));
+        personas.add(new Persona(1,"Shiva",8));
+        personas.add(new Persona(1,"Joel",47));
+        Flux.fromIterable(personas)
+//                .groupBy(p->p.getIdPersona()) // (Persona::getIdPersona)
+                // refactorizacion método referencia, agrupamos por IdPersona en diferentes flux
+                .groupBy(Persona::getIdPersona)
+                // recolectamos como una lista
+                .flatMap(idFlux->idFlux.collectList())
+                .subscribe(x->Log.info(x.toString()));
+    }
+
+    @Test
+    public void filter() {
+        List<Persona> personas = new ArrayList<>();
+        personas.add(new Persona(1,"Analyn",45));
+        personas.add(new Persona(1,"Shiva",8));
+        personas.add(new Persona(1,"Joel",47));
+        Flux.fromIterable(personas)
+                .filter(p->p.getEdad()>28)
+                .subscribe(p->Log.info(p.toString()));
+    }
+
+    /**
+     * distinct(); Es bueno para controlar los valores repetidos
+     * Ojo para filtrar @Override Hash and equals en class Persona
+     */
+    @Test
+    public void distinct(){
+        Flux.fromIterable(List.of(1,1,2,2))
+                .distinct()
+                .subscribe(p -> Log.info(p.toString()));
+
+        List<Persona> personas = new ArrayList<>();
+        personas.add(new Persona(1,"Analyn",45));
+        personas.add(new Persona(1,"Shiva",8));
+        personas.add(new Persona(3,"Joel",47));
+        Flux.fromIterable(personas)
+                .distinct()
+                .subscribe(p -> Log.info( p.toString()));
+    }
+
+    @Test
+    public void take(){
+        List<Persona> personas = new ArrayList<>();
+        personas.add(new Persona(1,"Analyn",45));
+        personas.add(new Persona(1,"Shiva",8));
+        personas.add(new Persona(3,"Joel",47));
+        Flux.fromIterable(personas)
+
+                // del flujo se coge el elmento de inicio hasta take. En este caso los dos primeros elementos del flujo de datos
+                .take(2)
+                .subscribe(p -> Log.info("take:" + p.toString()));
+
+        Flux.fromIterable(personas)
+                // del flujo se coge el elmento partiendo desde el final hasta el inicio. En este caso los dos primeros elementos comenzado por el final
+                .takeLast(2)
+                .subscribe(p -> Log.info("takelast:" + p.toString()));
+
+        Flux.fromIterable(personas)
+                // Evitamos el primer elemento del flujo
+                .skip(1)
+                .subscribe(p -> Log.info("skip:" + p.toString()));
+
+        Flux.fromIterable(personas)
+                // Evitamos el primer elemento del flujo
+                .skipLast(1)
+                .subscribe(p -> Log.info("skip:" + p.toString()));
 
     }
+
+    @Test
+    public void merge(){
+        List<Persona> personas1 = new ArrayList<>();
+        personas1.add(new Persona(1,"Analyn",45));
+        personas1.add(new Persona(2,"Shiva",8));
+        personas1.add(new Persona(3,"Joel",47));
+
+        List<Persona> personas2 = new ArrayList<>();
+        personas2.add(new Persona(4,"Pedro",45));
+        personas2.add(new Persona(5,"Juan",8));
+        personas2.add(new Persona(6,"Marta",47));
+
+        List<Venta> ventas = new ArrayList<>();
+        ventas.add(new Venta(1, LocalDateTime.now()));
+
+        Flux<Persona> flux1 = Flux.fromIterable(personas1);
+        Flux<Persona> flux2 = Flux.fromIterable(personas2);
+        Flux<Venta> fx3 = Flux.fromIterable(ventas);
+        Flux.merge(flux1,flux2,fx3)
+                .subscribe(p -> Log.info(p.toString()));
+    }
+
+    //https://www.youtube.com/watch?v=89tks2M46uY&list=PLvimn1Ins-41pwh18gh_ZkxPOkrEEhXz6&index=8
+    @Test
+    public void zip(){
+        List<Persona> personas1 = new ArrayList<>();
+        personas1.add(new Persona(1,"Analyn",45));
+        personas1.add(new Persona(2,"Shiva",8));
+        personas1.add(new Persona(3,"Joel",47));
+
+        List<Persona> personas2 = new ArrayList<>();
+        personas2.add(new Persona(4,"Pedro",33));
+        personas2.add(new Persona(5,"Juan",22));
+        personas2.add(new Persona(6,"Marta",11));
+
+        List<Venta> ventas = new ArrayList<>();
+        ventas.add(new Venta(1, LocalDateTime.now()));
+
+        Flux<Persona> flux1 = Flux.fromIterable(personas1);
+        Flux<Persona> flux2 = Flux.fromIterable(personas2);
+        Flux<Venta> flux3 = Flux.fromIterable(ventas);
+        /*
+        Flux.zip(flux1, flux2, (p1,p2) -> String.format("Flux1: %s, Flux2:%s",p1,p2))
+                .subscribe(x -> Log.info(x));
+        */
+        Flux.zip(flux1,flux2,flux3)
+                .subscribe( x -> Log.info(x.toString()));
+    }
+
+    @Test
+    public void zipWith(){
+        List<Persona> personas1 = new ArrayList<>();
+        personas1.add(new Persona(1,"Analyn",45));
+        personas1.add(new Persona(2,"Shiva",8));
+        personas1.add(new Persona(3,"Joel",47));
+
+        List<Persona> personas2 = new ArrayList<>();
+        personas2.add(new Persona(4,"Pedro",33));
+        personas2.add(new Persona(5,"Juan",22));
+        personas2.add(new Persona(6,"Marta",11));
+
+        List<Venta> ventas = new ArrayList<>();
+        ventas.add(new Venta(1, LocalDateTime.now()));
+
+        Flux<Persona> flux1 = Flux.fromIterable(personas1);
+        Flux<Persona> flux2 = Flux.fromIterable(personas2);
+        Flux<Venta> flux3 = Flux.fromIterable(ventas);
+
+        flux1.zipWith(flux2, (p1,p2) -> String.format("Flux1: %s, Flux2:%s",p1,p2))
+                .subscribe(x -> Log.info(x));
+
+    }
+
 
 }

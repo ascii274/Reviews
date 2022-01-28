@@ -2,6 +2,8 @@ package com.ascii274.mapflatmap.model;
 
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
+
 
 public class Persona {
     private Integer idPersona;
@@ -41,6 +43,19 @@ public class Persona {
     @Override
     public String toString(){
         return "Persona [idPersona=" + idPersona + ", nombre=" + nombre + ", edad=" + edad + "]\n";
-
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Persona persona = (Persona) o;
+        return idPersona.equals(persona.idPersona);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idPersona);
+    }
+
 }

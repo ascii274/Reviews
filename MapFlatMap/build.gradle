@@ -24,12 +24,24 @@ dependencies {
     implementation 'org.jetbrains:annotations:22.0.0'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
-    testImplementation 'io.projectreactor:reactor-test'
+    implementation 'io.projectreactor:reactor-test'
+
+
+    // https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjava
+    implementation group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.21'
 
     // https://mvnrepository.com/artifact/io.projectreactor/reactor-core
     implementation group: 'io.projectreactor', name: 'reactor-core', version: '3.4.14'
-    // https://mvnrepository.com/artifact/io.reactivex.rxjava2/rxjava
-    implementation group: 'io.reactivex.rxjava2', name: 'rxjava', version: '2.2.21'
+    // https://mvnrepository.com/artifact/io.projectreactor/reactor-test
+    //testImplementation group: 'io.projectreactor', name: 'reactor-test', version: '3.4.14'
+    // https://mvnrepository.com/artifact/org.projectlombok/lombok
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: '1.18.22'
+    implementation 'junit:junit:4.13.1'
+
+
+
+
+
 
 }
 
