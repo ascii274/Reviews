@@ -2,3 +2,5 @@ rootProject.name = 'Reviews'
 include 'WebRequest-WebClient'
 include 'MapFlatMap'
 include 'Gateway-StarWarsApi'
+include 'WebFlux'
+
