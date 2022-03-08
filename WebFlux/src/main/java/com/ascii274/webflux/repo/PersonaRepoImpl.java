@@ -4,6 +4,7 @@ import com.ascii274.webflux.config.LoadDataPersona;
 import com.ascii274.webflux.model.Persona;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -13,7 +14,7 @@ import java.util.List;
 @Repository
 public class PersonaRepoImpl implements IPersonaRepo{
 
-//    @Autowired
+    @Autowired
     LoadDataPersona config = new LoadDataPersona();
 
     private static final Logger Log = LoggerFactory.getLogger(PersonaRepoImpl.class);
@@ -27,8 +28,6 @@ public class PersonaRepoImpl implements IPersonaRepo{
         this.personas = personas;
     }
 
-
-
     @Override
     public Flux<Persona> registrar(Persona per) {
         Log.info((per.toString()));
@@ -39,6 +38,11 @@ public class PersonaRepoImpl implements IPersonaRepo{
     @Override
     public Mono<Persona> modificar(Persona per) {
         Log.info((per.toString()));
+        for(Persona p:personas){
+            if(p.getIdPersona() == per.getIdPersona()){
+                p.setNombre(per.getNombre());
+            }
+        }
         return Mono.just(per);
     }
 
@@ -52,15 +56,8 @@ public class PersonaRepoImpl implements IPersonaRepo{
         return Mono.just(new Persona(id,"Ascii"));
     }
 
-    /**
-     * Solo devuelve un Mono vacio.
-     * @param id
-     * @return
-     */
     @Override
     public Mono<Persona> eliminar(Integer id) {
-//        return Mono.empty();
-        //deve
         personas.removeIf(x->x.getIdPersona()==id);
         return Mono.just(new Persona(id,"DELETED PERSONA"));
     }

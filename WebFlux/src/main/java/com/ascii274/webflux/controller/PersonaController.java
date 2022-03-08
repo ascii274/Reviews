@@ -43,7 +43,7 @@ public class PersonaController {
 
 
 
-    @PutMapping
+    @PutMapping (value="/actualizar") // functional
     public Mono<Persona> modificar(@RequestBody Persona per){
         return personaRepoImp.modificar(per);
     }
@@ -53,14 +53,8 @@ public class PersonaController {
         return personaRepoImp.eliminar(id);
     }
 
-    /**
-     * el codigo de abajo por si queremos devolver un Mono empt
-     * @param id
-     * @return
-     */
 
-    // busca primero luego elimina
-    @DeleteMapping(value="buscar-eliminar/{id}")
+    @DeleteMapping(value="buscar-eliminar/{id}") // functional
     public Mono<Persona> buscarLuegoEliminar(@PathVariable("id") Integer id){
         return personaRepoImp.listarPorId(id) // devuelve un Mono de lo que ha encontrado
                 .flatMap( p-> personaRepoImp.eliminar(p.getIdPersona())); // de lo que he encotrado hago una eliminación
@@ -68,14 +62,16 @@ public class PersonaController {
 
 
     // busca primero luego elimina
-    @DeleteMapping(value="buscar-eliminar2/{id}")
+    @DeleteMapping(value="buscar-eliminar2/{id}") // functional
     public Mono<Persona> buscarLuegoEliminar2(@PathVariable("id") Integer id){
         return personaRepoImp.listarPorId(id) // devuelve un Mono de lo que ha encontrado
                 .flatMap( p-> personaRepoImp.eliminar2(p.getIdPersona())); // de lo que he encotrado hago una eliminación
     }
 
 
-    //
+    /**
+     * DEVELOP
+     */
     @GetMapping(value="/ver-link")
     public String listarPersonas(Model model){
         model.addAttribute("titulo","Titulo página listar.html");
