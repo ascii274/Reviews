@@ -2,7 +2,7 @@
 
 
 #### Applications
-- [Gateway-StarWarsApi](Gateway-StarWarsApi/README.md).
-- [MapFlatMap](MapFlatMap/README.md).
-- [WebFlux](WebFlux/README.md).
-- [WebRequest-WebClient](WebRequest-WebClient/README.md).
+- [Gateway-StarWarsApi](Gateway-StarWarsApi/README.md). [Develop]
+- [MapFlatMap](MapFlatMap/README.md). [Functional]
+- [WebFlux](WebFlux/README.md). [Functional]
+- [WebRequest-WebClient](WebRequest-WebClient/README.md). [Functional]

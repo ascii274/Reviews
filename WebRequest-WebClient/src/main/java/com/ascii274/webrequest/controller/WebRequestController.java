@@ -48,7 +48,7 @@ public class WebRequestController {
      * - Data to show is SportsEntities in Catalonia.
      * @return
      */
-    @GetMapping(value="/sports-entities")
+    @GetMapping(value="/starwars/sports-entities")
     public Mono<EntitySportCAT_DTO[]> getSportEntityV1(){
         return httpClientHelperSportEntityCAT.getData();
     }
