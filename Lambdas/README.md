@@ -1,0 +1,3 @@
+
+#### Comment:
+- Exercises with lambda.
