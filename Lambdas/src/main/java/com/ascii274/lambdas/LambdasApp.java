@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class LambdasApplication {
+public class LambdasApp {
 
 	public static void main(String[] args) {
-		SpringApplication.run(LambdasApplication.class, args);
+		SpringApplication.run(LambdasApp.class, args);
 	}
 
 }

@@ -14,8 +14,13 @@ repositories {
 
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation group: 'io.projectreactor', name: 'reactor-core', version: '3.4.14'
+
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+
 }
 
 tasks.named('test') {
