@@ -8,3 +8,6 @@
 - Understanding difference between map() and flatmap()
 - Understanding Mono and Flux with exercise
 
+#### Endpoints
+- http<nolink>://localhost:8080/v1/test-map
+
