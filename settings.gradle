@@ -4,4 +4,5 @@ include 'Lambdas'
 include 'MapFlatMap'
 include 'WebFlux'
 include 'WebRequest-WebClient'
+include 'Testing'
 
